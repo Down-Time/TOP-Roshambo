@@ -1,5 +1,6 @@
 //Scripts to play rock, paper, scissor
 
+
 function computerPlay(){
     // Alternative to using switch statement, used an object literal
     // this appears to be to recommended approach over using switch statements
@@ -37,33 +38,68 @@ function playRound(playerSelection,computerSelection){
         '85':[2,'You Win! Scissors beat Paper'],
         '88':[0,'Tie!']
     } [play];} else {
-        //999 return error that user did not enter correct choice
+        //999 return error that user did not enter correct choice, no longer needed becuase
+        //choices are made from buttons and not typed into console 
         return [999,"Please enter Rock, Paper or Scissors"]
     }
 }
 
-function game(){
-    //array to store scores [0]=ties, [1]=computer score [2]=player score
-    let score=[0,0,0];
-    //the count variable is the number of games to play.  if a user enters an incorrect value
-    //the count is increased to ensure  5 games are played
-    let count=5;
+function game(e){
+
+    // display your choice
+    document.querySelector('.you').textContent=`You: ${e.target.innerText}`;
     
-    //loop to play 5 games 
-    for (var i = 0; i < count; i++) {
-        let playerSelection=prompt("Take a shot, Rock, Paper, Scissor? ");
-        let computerSelection=computerPlay();
-        let result=playRound(playerSelection,computerSelection);
-        console.log(result[1]);
-        if (result[0]!=999){
-            score[result[0]]++;
-        } else{count++;}
+    //remove the css select style for selected div
+    const btn =document.querySelector(`.${e.target.innerText}`);
+    btn.classList.remove('select');
+
+    //player button selection
+    let playerSelection=btn.innerText;
+    //computer selectio
+    let computerSelection=computerPlay();
+    document.querySelector('.computer').textContent=`Computer: ${computerSelection}`;
+
+    //get results of player/computer selections
+    let result=playRound(playerSelection,computerSelection);
+    //display results on page
+    document.querySelector('.winner').textContent=result[1];
+    //this probably isn't needed becuase users are selection buttons and no longer typing in selection
+    if (result[0]!=999){
+        score[result[0]]++;
+    } else{count++;}
+    
+    //display score on page
+    document.querySelector('.score').textContent=`You: ${score[2]} \r\n Computer: ${score[1]} \r\n Ties:  ${score[0]}`;
+
+    for (s of score){
+        if (s==5){
+
+        }
     }
-    if (score[2]>score[1]){
-            console.log("You Win!: You: " + score[2]+" Computer: "+ score[1]+ " Ties: "+ score[0] );
-    } else if (score[1]>score[2]){
-        console.log("You Loose!: You: " + score[2]+" Computer: "+ score[1]+ " Ties: "+ score[0] );
-    } else{
-        console.log("Tie!: You: " + score[2]+" Computer: "+ score[1]+ " Ties: "+ score[0] );
+    if (score[1]==5){
+        document.querySelector('.champ').textContent='COMPUTER WINS!';
+        score=[0,0,0];
+    }else if (score[2]==5){
+        document.querySelector('.champ').textContent='YOUR WIN!';
+        score=[0,0,0];  
+    }else{
+        document.querySelector('.champ').textContent='';
     }
+
 }
+
+function click(e){
+    const btn =document.querySelector(`.${e.target.innerText}`);
+    btn.classList.add('select');
+}
+
+//array to store scores [0]=ties, [1]=computer score [2]=player score
+let score=[0,0,0];
+
+const buttons=document.querySelectorAll('.button');
+
+buttons.forEach(button=>button.addEventListener('mouseup',game));
+buttons.forEach(button=>button.addEventListener('mousedown',click));
+
+//testing logging
+//window.addEventListener('mouseup',()=>{console.log("hello");});
